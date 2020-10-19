@@ -1,6 +1,8 @@
 #ifndef FMI_LINKED_LIST_H_
 #define FMI_LINKED_LIST_H_
 
+#include <stdexcept>
+
 template <typename T>
 class FMILinkedList
 {
@@ -11,23 +13,29 @@ class FMILinkedList
     };
 
 private:
-    Node *first;
+    Node *first, *last;
+    int size;
+
     void copy(const FMILinkedList &other); // DONE
     void clear(); // DONE
 
+    Node *find(int index);
+
 public:
     FMILinkedList(); // DONE
-    FMILinkedList(const FMILinkedList<T> &other);
-    FMILinkedList &operator=(const FMILinkedList<T> &other);
+    FMILinkedList(const FMILinkedList<T> &other); // DONE
+    FMILinkedList &operator=(const FMILinkedList<T> &other); // DONE
     ~FMILinkedList(); // DONE
 
     void push_back(const T& data);
     void erase_at(int index);
-    int size();
+    int getSize();
+
+    T &operator[](int index);
 };
 
 template <typename T>
-FMILinkedList<T>::FMILinkedList() : first(nullptr) {}
+FMILinkedList<T>::FMILinkedList() : first(nullptr), last(nullptr), size(0) {}
 
 template <typename T>
 void FMILinkedList<T>::clear()
@@ -40,6 +48,8 @@ void FMILinkedList<T>::clear()
         delete temp;
     }
     first = nullptr;
+    last = nullptr;
+    size = 0;
 }
 
 template <typename T>
@@ -51,25 +61,13 @@ FMILinkedList<T>::~FMILinkedList()
 template <typename T>
 void FMILinkedList<T>::copy(const FMILinkedList &other)
 {
-    if (other.first == nullptr)
-    {
-        first = nullptr;
-        return;
-    }
+    Node *iter = other.first;
+    first = nullptr;
+    last = nullptr;
 
-    Node *thisIter, *otherIter = other.first;
-    first = new Node();
-    thisIter = first;
-
-    while (otherIter != nullptr)
+    while (iter != nullptr)
     {
-        thisIter->data = otherIter->data;
-        if (otherIter->next != nullptr)
-        {
-            thisIter->next = new Node();
-        }
-        thisIter = thisIter->next;
-        otherIter = otherIter->next;
+        push_back(iter->data);
     }
 }
 
@@ -91,4 +89,90 @@ FMILinkedList<T> &FMILinkedList<T>::operator=(const FMILinkedList<T> &other)
     return *this;
 }
 
+
+template <typename T>
+void FMILinkedList<T>::push_back(const T& data)
+{
+    auto cell = new Node();
+    cell->data = data;
+    cell->next = nullptr;
+    ++size;
+
+    if (first == nullptr)
+    {
+        first = cell;
+        last = first;
+        return;
+    }
+
+    last->next = cell;
+    last = cell;
+}
+
+template <typename T>
+void FMILinkedList<T>::erase_at(int index)
+{
+    Node *temp = first;
+
+    if (index < 0 || index > size - 1)
+    {
+        return;
+    }
+
+    --size;
+
+    if (index == 0)
+    {
+        first = first->next;
+        delete temp;
+        if (first == nullptr)
+        {
+            last = nullptr;
+        }
+        return;
+    }
+
+    temp = find(index - 1);
+
+    Node *toDelete = temp->next;
+    temp->next = temp->next->next;
+    if (toDelete == last)
+    {
+        last = temp;
+    }
+    delete toDelete;
+}
+
+template <typename T>
+int FMILinkedList<T>::getSize()
+{
+    return size;
+}
+
+template <typename T>
+T &FMILinkedList<T>::operator[](int index)
+{
+    return find(index)->data;
+}
+
+template <typename T>
+typename FMILinkedList<T>::Node *FMILinkedList<T>::find(int index)
+{
+    if (index < 0 || index >= size)
+    {
+        throw std::runtime_error("Index out of bounds");
+    }
+
+    int currentIndex = 0;
+    Node *iterator = first;
+    while (currentIndex != index)
+    {
+        iterator = iterator->next;
+        currentIndex++;
+    }
+
+    return iterator;
+}
+
 #endif // FMI_LINKED_LIST_H_
+
