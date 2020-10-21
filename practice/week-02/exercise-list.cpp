@@ -16,6 +16,8 @@ public:
 
   void insetAtStart(T data);
   void print();
+  void at(T data, int position);
+  int longestIncreasing();
 };
 
 template<class T>
@@ -55,14 +57,69 @@ void List<T>::print() {
   }
 }
 
+template<class T>
+void List<T>::at(T data, int position) {
+  List<T>::Node *newNode = new Node();
+  newNode->data = data;
+
+  if(position == 0) {
+    this->insetAtStart(data);
+    return;
+  }
+
+  List<T>::Node *curr = first;
+  while (curr->next != nullptr && position != 1) {
+    curr = curr->next;
+    position--;
+  }
+  
+  newNode->next = curr->next;
+  curr->next = newNode;
+}
+
+template<class T>
+int List<T>::longestIncreasing() {
+  List<T>::Node *curr = first->next, *prev = first;
+  int maxLength = 1, currLength = 1;
+
+  if (this->first == nullptr) {
+    return 0;
+  }
+
+  while (curr != nullptr) {
+    if (curr->data > prev->data) {
+      currLength++;
+    }
+    else {
+      if (maxLength < currLength) {
+        maxLength = currLength;
+      }
+      currLength = 1;
+    }
+    curr = curr->next;
+    prev = prev->next;
+  }
+
+  if (currLength > maxLength) {
+    maxLength = currLength;
+  }
+  return maxLength;
+}
+
 int main() {
   List<int> list;
 
-  list.insetAtStart(1);
-  list.insetAtStart(2);
   list.insetAtStart(3);
+  list.insetAtStart(2);
+  list.insetAtStart(1);
 
   list.print();
+  std::cout << std::endl;
+
+  // list.at(5, 2);
+  list.print();
+
+  std::cout << std::endl << list.longestIncreasing() << std::endl;
   
   return 0;
 }
