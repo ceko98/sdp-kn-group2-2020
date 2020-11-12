@@ -9,7 +9,5 @@ int main() {
     t.add(4, "LR");
     t.add(5, "LL");
 
-    t.print();
-
     return 0;
 }
