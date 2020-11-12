@@ -103,18 +103,19 @@ void List<T>::sort() {
       curr = curr->next;
     }
 
+    if (currMin == tmpFirst) {
+      tmpFirst = tmpFirst->next;
+    } else {
+      prevMin->next = prevMin->next->next;
+    }
+
     if (newFirst == nullptr) {
       newFirst = currMin;
       newFirstCurr = newFirst;
     } else {
       newFirstCurr->next = currMin;
       newFirstCurr = newFirstCurr->next;
-    }
-    
-    if (currMin == tmpFirst) {
-      tmpFirst = tmpFirst->next;
-    } else {
-      prevMin->next = prevMin->next->next;
+      newFirstCurr->next = nullptr;
     }
   }
 
@@ -141,18 +142,21 @@ void List<T>::difference(List<T>& list) {
 
     while (firstCurr != nullptr) {
       if (secondCurr->data == firstCurr->data) {
+        Node * tmp = firstCurr;
+
         if (firstCurr == this->first) {
           this->first = this->first->next;
+          firstCurr = this->first;
         } else {
-          firstPrev->next = firstCurr->next;
+            firstCurr = firstCurr->next;
+          firstPrev->next = firstCurr;
         }
-
-        delete firstCurr;
-        firstCurr = firstPrev->next;
+        
+        delete tmp;
       }
 
       firstPrev = firstCurr;
-      firstCurr = firstCurr->next;
+      firstCurr = firstCurr != nullptr ? firstCurr->next : nullptr;
     }
 
     secondCurr = secondCurr->next;
@@ -204,32 +208,32 @@ int main() {
   List<int> list;
   List<int> list2;
 
+  list.insetAtStart(6);
   list.insetAtStart(7);
-  list.insetAtStart(4);
   list.insetAtStart(1);
   list.insetAtStart(10);
   list.print();
   std::cout << std::endl;
-  // list.sort();
-  // list.print();
-  // std::cout << std::endl;
+  list.sort();
+  list.print();
+  std::cout << std::endl;
 
   list2.insetAtStart(1);
-  list2.insetAtStart(5);
+  list2.insetAtStart(10);
 
   list.difference(list2);
   list.print();
   std::cout << std::endl;
 
-  List<int> cyclic;
-  cyclic.setCyclic();
-  // cyclic.print();
-  std::cout << cyclic.detectCycle() << std::endl;
+//   List<int> cyclic;
+//   cyclic.setCyclic();
+//   // cyclic.print();
+//   std::cout << cyclic.detectCycle() << std::endl;
 
-  q.front() // position (1,1)
-  int numberOfPositions = 3;
-  while (/**/)
-    q.push(/*new position*/);
+//   q.front() // position (1,1)
+//   int numberOfPositions = 3;
+//   while (/**/)
+//     q.push(/*new position*/);
 
 
   return 0;
