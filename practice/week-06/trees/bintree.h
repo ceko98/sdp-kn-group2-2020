@@ -18,6 +18,9 @@ class BinTree
     void toDotty(std::ostream& out);
 
     bool member (const T& x);
+    T min();
+    bool isEven();
+    bool hasWord(const char * str);
 
     private:
     struct node
@@ -28,6 +31,11 @@ class BinTree
 
     node* locate (const char*) const;
     node *root;
+
+    int minHelper(node * node);
+    bool isEvenHelper(node * node);
+    bool hasWordHelper(node * node, const char * str);
+    bool matchWord(node * node, const char * str);
 };
 
 #endif
