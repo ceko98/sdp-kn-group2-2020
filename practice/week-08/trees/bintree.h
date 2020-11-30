@@ -31,11 +31,6 @@ class BinTree
 
     node* locate (const char*) const;
     node *root;
-
-    int minHelper(node * node);
-    bool isEvenHelper(node * node);
-    bool hasWordHelper(node * node, const char * str);
-    bool matchWord(node * node, const char * str);
 };
 
 #endif

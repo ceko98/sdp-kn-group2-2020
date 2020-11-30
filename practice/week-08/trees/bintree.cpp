@@ -54,8 +54,6 @@ void BinTree<T>::add (const T &x, const char *trace)
         assert (false);
     }
 
-
-
 }
 
 template <class T>
@@ -107,80 +105,5 @@ void BinTree<T>::toDotty(std::ostream& out)
     toDottyHelp(out, root);
     out << "}";
 }
-
-template<class T>
-T BinTree<T>::min() {
-    return this->minHelper(this->root);
-}
-
-template<>
-int BinTree<int>::minHelper(node * node) {
-    if (node == nullptr) {
-        return std::numeric_limits<int>::max();
-    }
-
-    int leftMin = this->minHelper(node->left);
-    int rightMin = this->minHelper(node->right);
-    int lefRightMin = std::min(leftMin, rightMin);
-
-    return std::min(node->data, lefRightMin);
-}
-
-template<class T>
-bool BinTree<T>::isEven() {
-    return this->isEvenHelper(this->root);
-}
-template<class T>
-bool BinTree<T>::isEvenHelper(node * node) {
-    if (node == nullptr) {
-        return true;
-    }
-    // true && x = x
-    return node->data % 2 == 0
-        && isEvenHelper(node->left)
-        && isEvenHelper(node->right);
-}
-
-template<class T>
-bool BinTree<T>::hasWord(const char * str) {
-    return this->hasWordHelper(this->root, str);
-}
-
-template<class T>
-bool BinTree<T>::hasWordHelper(node * node, const char * str) {
-    if (node == nullptr) {
-        return false;
-    }
-
-    bool isCurrentMatch = false;
-    if (str[0] == node->data) {
-        isCurrentMatch = this->matchWord(node, str);
-    }
-    bool hasLeft = this->hasWordHelper(node->left, str);
-    bool hasRight = this->hasWordHelper(node->right, str);
-
-    return isCurrentMatch || hasLeft || hasRight;
-}
-
-template<class T>
-bool BinTree<T>::matchWord(node * node, const char * str) {
-    if (node == nullptr) {
-        return false;
-    }
-
-    if (node->left == nullptr && node->right == nullptr && str[1] == '\0') {
-        return str[0] == node->data;
-    }
-
-    if (node->data != str[0]) {
-        return false;
-    }
-
-    bool leftMatch = matchWord(node->left, ++str);
-    bool rightMatch = matchWord(node->right, ++str);
-
-    return leftMatch || rightMatch;
-}
-
 
 #endif
