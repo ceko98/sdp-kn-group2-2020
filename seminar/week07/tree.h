@@ -133,6 +133,11 @@ bool FMIBinTree<T>::push(const T& data)
         // (*tmp)->data не може да е равна на data заради цикъла
         if (data < (*tmp)->data)
         {
+            // (Node*) root => променлива от тип Node*
+            // (Node**) tmp => адрес на променлива от тип Node*
+            // (Node*) *tmp => променлива от тип Node*
+            // (Node*) (*tmp)->left => променлива от тип Node*
+            // (Node**) &((*tmp)->left) => адрес на променлива от тип Node*
             tmp = &(*tmp)->left;
         }
         else
@@ -144,7 +149,7 @@ bool FMIBinTree<T>::push(const T& data)
     // ако tmp сочи към променлива, в която има валиден адрес,
     // то значи сочи към валиден връх в дървото, т.е. намерили сме data,
     // следователно няма да insert-ваме наново същите данни
-    if (*tmp)
+    if (*tmp != nullptr) // => (*tmp)->data == data;
     {
         return false;
     }
