@@ -123,48 +123,40 @@ void FMIBinTree<T>::executeOnNode(Node* node, const std::function<void(const T&)
 template <typename T>
 bool FMIBinTree<T>::push(const T& data)
 {
-    Node* newCell = new Node();
-    newCell->data = data;
-    newCell->left = nullptr;
-    newCell->right = nullptr;
+    // Пазим адреса на променливата, която сочи към корена на дървото
+    Node** tmp = &root;
 
-    if (!root)
+    // Изпълняваме цикъл докато променливата, към която сочи tmp, съдържа валиден адрес,
+    // т.е. не е nullptr, или докато данните в тази променлива са различни от data
+    while (*tmp && (*tmp)->data != data)
     {
-        root = newCell;
-        return true;
-    }
-
-    Node* tmp = root;
-    while (tmp)
-    {
-        if (tmp->data == data)
+        // (*tmp)->data не може да е равна на data заради цикъла
+        if (data < (*tmp)->data)
         {
-            return false;
-        }
-
-        if (data < tmp->data)
-        {
-            if (!tmp->left)
-            {
-                tmp->left = newCell;
-                return true;
-            }
-
-            tmp = tmp->left;
+            tmp = &(*tmp)->left;
         }
         else
         {
-            if (!tmp->right)
-            {
-                tmp->right = newCell;
-                return true;
-            }
-
-            tmp = tmp->right;
+            tmp = &(*tmp)->right;
         }
     }
 
-    return false;
+    // ако tmp сочи към променлива, в която има валиден адрес,
+    // то значи сочи към валиден връх в дървото, т.е. намерили сме data,
+    // следователно няма да insert-ваме наново същите данни
+    if (*tmp)
+    {
+        return false;
+    }
+
+    // tmp сочи към променлива, чиято стойност е nullptr,
+    // следователно можем на мястото на тази променлива да създадем нов Node,
+    // съдържащ данните data с ляв и десен наследник nullptr
+    *tmp = new Node();
+    (*tmp)->data = data;
+    (*tmp)->left = nullptr;
+    (*tmp)->right = nullptr;
+    return true;
 }
 
 template <typename T>
