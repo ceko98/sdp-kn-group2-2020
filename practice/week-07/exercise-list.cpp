@@ -28,6 +28,12 @@ public:
   Node * getFirst() {
       return this->first;
   };
+    T reduce(T(*operation)(T, T), T defaultValue);
+    void shuffle();
+
+    void equalStacks();
+    void printForStacks();
+
   Node * copyList();
   bool subdup(int k);
 };
@@ -182,6 +188,119 @@ std::queue<T> fillQueue(std::stack<T>& stack)
 	return result;
 }
 
+template <class T>
+T List<T>::reduce(T (*operation)(T, T), T defaultValue) {
+    Node * curr = first;
+    T accum = defaultValue;
+    while (curr) {
+        accum = operation(accum, curr->data);
+        curr = curr->next;
+    }
+    return accum;
+}
+
+template <class T>
+void List<T>::shuffle()
+{
+    Node * curr = first;
+    int length = 0;
+    while (curr != nullptr)
+    {
+        length++;
+        curr = curr->next;
+    }
+    
+    curr = first;
+    for (int i = 0; i < length / 2; i++)
+    {
+        curr = curr->next;
+    }
+
+    Node * tmp = curr->next;
+    while (curr->next != nullptr) {
+        curr->next = tmp->next;
+        tmp->next = first;
+        first = tmp;
+        tmp = curr->next;
+    }
+}
+
+// 4 -> 3 -> 1 -> 2 -> nullptr
+//-> 4
+// 3 ->
+
+template <class T>
+int sizeOfStack(std::stack<T> st) {
+    int lenght = 0;    
+    while (!st.empty())
+    {
+        lenght++;
+        st.pop();
+    }
+    return lenght;
+}
+
+template <>
+void List<std::stack<int>>::equalStacks()
+{
+    int listLength = 0;
+    int totalElements = 0;
+    Node * curr = first;
+    while (curr)
+    {
+        listLength++;
+        totalElements += sizeOfStack(curr->data);
+        curr = curr->next;
+    }
+    int average = totalElements / listLength;
+    Node * currWithMore = first;
+    Node * currWithLess = first;
+
+    std::cout << average << " " << totalElements << std::endl;
+
+    while (currWithMore && currWithLess)
+    {
+        while (currWithMore->next != nullptr && sizeOfStack(currWithMore->data) <= average) {
+            currWithMore = currWithMore->next;
+        }
+        while (currWithLess->next != nullptr && sizeOfStack(currWithLess->data) >= average) {
+            currWithLess = currWithLess->next;
+        }
+
+        int sizeOfMore = sizeOfStack(currWithMore->data);
+        int sizeOfLess = sizeOfStack(currWithLess->data);
+        
+        while (sizeOfMore > average || sizeOfLess < average)
+        {
+            int elem = (currWithMore->data).top();
+            (currWithLess->data).push(elem);
+            (currWithMore->data).pop();
+            sizeOfLess++;
+            sizeOfMore--;
+        }
+    }   
+}
+
+void printStack(std::stack<int> st) {
+    while (!st.empty())
+    {
+        std::cout << st.top() << " ";
+        st.pop();
+    }
+    std::cout << std::endl;
+}
+
+template <class T>
+void List<T>::printForStacks(){
+    Node * curr = first;
+    while (curr)
+    {
+        printStack(curr->data);
+        curr = curr->next;
+    }
+    
+}
+
 // зад 2.
 /*
 template <typename T>
@@ -234,6 +353,14 @@ void mirror(node_int*& node)
 }
 */
 
+int add(int a, int b) {
+    return a + b;
+}
+
+int product(int a, int b) {
+    return a * b;
+}
+
 int main() {
   List<int> list, list2;
 
@@ -245,6 +372,45 @@ int main() {
   list.insetAtStart(2);
   list.insetAtStart(1);
 
+    std::stack<int> st1;
+    std::stack<int> st2;
+    std::stack<int> st3;
+    std::stack<int> st4;
+    List<std::stack<int>> stackList;
+
+    st1.push(5);
+    st1.push(4);
+    st1.push(3);
+    st1.push(2);
+    st1.push(1);
+
+    st2.push(7);
+    st2.push(6);
+
+    st3.push(11);
+    st3.push(10);
+    st3.push(9);
+    st3.push(8);
+
+    st4.push(12);
+
+    stackList.insetAtStart(st4);
+    stackList.insetAtStart(st3);
+    stackList.insetAtStart(st2);
+    stackList.insetAtStart(st1);
+
+    stackList.printForStacks();
+    stackList.equalStacks();
+    stackList.printForStacks();
+
+//     auto func = [](int a, int b){ return a + b; };
+//   std::cout << list.reduce(func, 1) << std::endl;
+
+// list.print();
+// list.shuffle();
+// list.print();
+
+
 //   list2.insetAtStart(2);
 //   list2.insetAtStart(2);
 //   list2.insetAtStart(2);
@@ -252,7 +418,7 @@ int main() {
 //   list2.print();
 
 //   list.append(list2);
-    std::cout << list.subdup(2) << std::endl; 
+    // std::cout << list.subdup(2) << std::endl; 
 //   list.print();
 
   return 0;
