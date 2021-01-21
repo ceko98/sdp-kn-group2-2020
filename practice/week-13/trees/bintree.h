@@ -28,17 +28,20 @@ class BinTree
     int findDepth(T elem);
     void bfs();
     void deleteElem(T elem);
+    void formArray(std::vector<T> arr);
     void printWordsDFS();
+    void printWordsDfsHelp(node * curr, std::vector<char> & path);
 
-    private:
+    public:
     struct node
     {
         T data;
         node *left, *right;
 
-        node(T elem, node *left = nullptr, node *right = nullptr) : data(elem), left(nullptr), right(nullptr) {
+        node(T elem) : data(elem), left(nullptr), right(nullptr) {
         }
     };
+    private:
 
     node* locate (const char*) const;
     node *root;
@@ -48,7 +51,7 @@ class BinTree
     void deleteElemHelp(node *  curr, node * parent, T elem);
     node * findParentOfMin(node *  curr, node *  parent);
     node * findParentOfMax(node *  curr, node *  parent);
-    void printWordsDfsHelp(node *curr, std::vector<char> & path);
+    node * formArrayHelp(std::vector<T> arr, int rootIndex);
 };
 
 #endif

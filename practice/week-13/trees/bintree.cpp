@@ -5,7 +5,6 @@
 #include <cassert>
 #include <limits>
 #include <queue>
-#include <vector>
 
 template <class T>
 BinTree<T>::BinTree() : root(nullptr)
@@ -213,89 +212,40 @@ void BinTree<T>::bfs()
     }
 }
 
-template <class T>
-typename BinTree<T>::node *BinTree<T>::findParentOfMax(BinTree<T>::node *curr, BinTree<T>::node *parent)
+template<>
+BinTree<int>::node * BinTree<int>::formArrayHelp(std::vector<int> arr, int rootIndex)
 {
-    if (!curr->right)
-    {
-        return parent;
+    if (rootIndex >= arr.size() || arr[rootIndex] == -1) {
+        return nullptr;
     }
-    return findParentOfMax(curr->right, curr);
+
+    node * curr = new node(arr[rootIndex]);
+    
+    node * left = nullptr;
+    node * right = nullptr;
+
+    if (rootIndex * 2 + 1 < arr.size()) {
+        left = formArrayHelp(arr, rootIndex * 2 + 1);
+    }
+    if (rootIndex * 2 + 2 < arr.size()) {
+        right = formArrayHelp(arr, rootIndex * 2 + 2);
+    }
+
+    curr->left = left;
+    curr->right = right;
+
+    return curr;
 }
 
-template <class T>
-typename BinTree<T>::node *BinTree<T>::findParentOfMin(BinTree<T>::node *curr, BinTree<T>::node *parent)
+template<>
+void BinTree<int>::formArray(std::vector<int> arr)
 {
-    if (!curr->left)
-    {
-        return parent;
-    }
-    return findParentOfMin(curr->left, curr);
+    node * root = formArrayHelp(arr, 0);
+    this->root = root;
 }
-
-template <class T>
-void BinTree<T>::deleteElem(T elem)
-{
-    deleteElemHelp(root, nullptr, elem);
-}
-
-template <class T>
-void BinTree<T>::deleteElemHelp(BinTree<T>::node *curr, BinTree<T>::node *parent, T elem)
-{
-    if (curr == nullptr)
-    {
-        return;
-    }
-    if (curr->data == elem)
-    {
-        if (curr->left)
-        {
-            BinTree<T>::node *parentOfReplace = findParentOfMax(curr->left, curr);
-            BinTree<T>::node *toDelete = parentOfReplace == curr ? parentOfReplace->left : parentOfReplace->right;
-            curr->data = toDelete->data;
-            if (parentOfReplace == curr) {
-                parentOfReplace->left = toDelete->left;
-            } else {
-                parentOfReplace->right = toDelete->left;
-            }
-            delete toDelete;
-        }
-        else if (curr->right)
-        {
-            BinTree<T>::node *parentOfReplace = findParentOfMin(curr->left, curr);
-            BinTree<T>::node *toDelete = parentOfReplace == curr ? parentOfReplace->right : parentOfReplace->left;
-            curr->data = toDelete->data;
-            if (parentOfReplace == curr) {
-                parentOfReplace->right = toDelete->right;
-            } else {
-                parentOfReplace->left = toDelete->right;
-            }
-            delete toDelete;
-        }
-        else
-        {
-            if (parent->left == curr)
-            {
-                parent->left = nullptr;
-            }
-            else
-            {
-                parent->right = nullptr;
-            }
-
-            delete curr;
-        }
-    }
-    else
-    {
-        deleteElemHelp(curr->left, curr, elem);
-        deleteElemHelp(curr->right, curr, elem);
-    }
-}
-
 
 template<class T>
-void BinTree<T>::printWordsDfsHelp(node *curr, std::vector<char> & path, std::vector<std::vector<char>> & allPaths) {
+void BinTree<T>::printWordsDfsHelp(node *curr, std::vector<char> & path) {
     path.push_back(curr->data);
     if (!curr->left && !curr->right) {
         for (auto c : path)
@@ -303,8 +253,6 @@ void BinTree<T>::printWordsDfsHelp(node *curr, std::vector<char> & path, std::ve
             std::cout << c;
         }
         std::cout << std::endl;
-
-        allPath.push_back(path);
     }
 
     if (curr->left) {
@@ -316,13 +264,11 @@ void BinTree<T>::printWordsDfsHelp(node *curr, std::vector<char> & path, std::ve
     path.pop_back();
 }
 
-template<class T>
-void BinTree<T>::printWordsDFS() {
+template<>
+void BinTree<char>::printWordsDFS() {
     std::vector<char> path;
-    std::vector<std::vector<char>> allPaths;
-    printWordsDfsHelp(root, path, allPaths);
-
-    return allPaths;
+    printWordsDfsHelp(root, path);
 }
+
 
 #endif
